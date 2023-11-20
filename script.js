@@ -1,6 +1,11 @@
 //  game board module
 const gameBoard = (() => {
-	const board = ["", "", "", "", "", "", "", "", ""];
+	let board = ["", "", "", "", "", "", "", "", ""];
+
+	// resets board
+	const newBoard = () => {
+		board.fill("");
+	};
 
 	// check mark empty
 	const checkMark = (place) => board[place] === "";
@@ -17,51 +22,51 @@ const gameBoard = (() => {
 	// check win
 	const checkWinner = () => {
 		if (board[0] !== "" && board[0] === board[1] && board[1] === board[2]) {
-			return true;
+			return { condition: true, mark: board[0] };
 		} else if (
 			board[3] !== "" &&
 			board[3] === board[4] &&
 			board[4] === board[5]
 		) {
-			return true;
+			return { condition: true, mark: board[3] };
 		} else if (
 			board[6] !== "" &&
 			board[6] === board[7] &&
 			board[7] === board[8]
 		) {
-			return true;
+			return { condition: true, mark: board[6] };
 		} else if (
 			board[0] !== "" &&
 			board[0] === board[3] &&
 			board[3] === board[6]
 		) {
-			return true;
+			return { condition: true, mark: board[0] };
 		} else if (
 			board[1] !== "" &&
 			board[1] === board[4] &&
 			board[4] === board[7]
 		) {
-			return true;
+			return { condition: true, mark: board[1] };
 		} else if (
 			board[2] !== "" &&
 			board[2] === board[5] &&
 			board[5] === board[8]
 		) {
-			return true;
+			return { condition: true, mark: board[2] };
 		} else if (
 			board[0] !== "" &&
 			board[0] === board[4] &&
 			board[4] === board[8]
 		) {
-			return true;
+			return { condition: true, mark: board[0] };
 		} else if (
 			board[2] !== "" &&
 			board[2] === board[4] &&
 			board[4] === board[6]
 		) {
-			return true;
+			return { condition: true, mark: board[2] };
 		} else {
-			return false;
+			return { condition: false };
 		}
 	};
 	return {
@@ -69,6 +74,7 @@ const gameBoard = (() => {
 		checkMark,
 		placeMark,
 		checkWinner,
+		newBoard,
 	};
 })();
 
@@ -88,25 +94,51 @@ const gameController = (() => {
 	const player2 = playerModule.createPlayer("O");
 	let currentPlayer = player1;
 
+	// check tie
+	const checkTie = () => {
+		if (
+			!gameBoard.board.includes("") &&
+			gameBoard.checkWinner().condition === false
+		) {
+			console.log("its a tie");
+			return true;
+		} else {
+			false;
+		}
+	};
+
 	// switched player
+	const playerDiv = document.getElementById("player");
 	const switchPlayer = () => {
 		if (currentPlayer === player1) {
 			currentPlayer = player2;
+			playerDiv.textContent = `${currentPlayer.mark} chance`;
+
 			console.log(`player2's turn ${player2.mark}`);
+			return currentPlayer;
 		} else {
 			currentPlayer = player1;
+			playerDiv.textContent = `${currentPlayer.mark} chance`;
+
 			console.log(`player1's turn ${player1.mark}`);
 		}
 	};
 
 	// play turn
+	const markAgainDiv = document.getElementById("markAgain");
 	const playTurn = (place) => {
 		if (gameBoard.checkMark(place)) {
 			gameBoard.placeMark(currentPlayer.mark, place);
+			markAgainDiv.textContent = "";
+			checkTie();
+
 			gameController.checkStatus();
+			updateDis();
 			switchPlayer();
 			printBoard();
 		} else {
+			markAgainDiv.textContent =
+				"Cell already occupied. Try a different place.";
 			console.log("try place");
 		}
 	};
@@ -132,16 +164,41 @@ const gameController = (() => {
 	};
 
 	// check game status
+	const winnerText = document.getElementById("winner");
 	const checkStatus = () => {
-		if (gameBoard.checkWinner()) {
-			console.log("won");
+		if (gameBoard.checkWinner().condition) {
+			console.log(currentPlayer.mark, "won!");
+			winnerText.textContent = `${currentPlayer.mark} Won!`;
+			modal.showModal();
+		} else if (checkTie() === true) {
+			winnerText.textContent = "It's a tie!";
+			modal.showModal();
 		}
 	};
 
-	return { playTurn, checkStatus, currentPlayer, printBoard };
+	const boardCells = document.querySelectorAll(".cell");
+	boardCells.forEach((cell, index) => {
+		cell.addEventListener("click", () => {
+			gameController.playTurn(index);
+		});
+	});
+	const updateDis = () => {
+		for (let i = 0; i < 9; i++) {
+			boardCells[i].textContent = gameBoard.board[i];
+		}
+	};
+
+	const modal = document.getElementById("modal");
+	const resetButton = document.getElementById("replay");
+	resetButton.addEventListener("click", () => {
+		gameBoard.newBoard();
+		modal.close();
+		updateDis();
+		currentPlayer = player1; // Reset the current player to player1
+		playerDiv.textContent = `${currentPlayer.mark} chance`;
+	});
+
+	return { playTurn, checkStatus, currentPlayer, printBoard, updateDis };
 })();
 
-// gameController.playTurn(0);
-// gameController.playTurn(4);
-// gameController.playTurn(4);
-// gameController.playTurn(8);
+gameBoard.newBoard();
