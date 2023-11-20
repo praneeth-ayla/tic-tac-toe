@@ -14,8 +14,6 @@ const gameBoard = (() => {
 	const placeMark = (mark, place) => {
 		if (checkMark(place) === true) {
 			board[place] = mark;
-		} else {
-			console.log("try different place");
 		}
 	};
 
@@ -88,7 +86,6 @@ const playerModule = (() => {
 })();
 
 // game logic
-
 const gameController = (() => {
 	const player1 = playerModule.createPlayer("X");
 	const player2 = playerModule.createPlayer("O");
@@ -110,6 +107,8 @@ const gameController = (() => {
 	// switched player
 	const playerDiv = document.getElementById("player");
 	const switchPlayer = () => {
+		gameController.checkStatus();
+
 		if (currentPlayer === player1) {
 			currentPlayer = player2;
 			playerDiv.textContent = `${currentPlayer.mark} chance`;
