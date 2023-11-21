@@ -79,9 +79,19 @@ const gameBoard = (() => {
 // player module
 const playerModule = (() => {
 	const createPlayer = (mark) => {
-		return { mark };
-	};
+		let scorePlayer = 0;
+		// const increaseScore = () => {
+		// 	scorePlayer += 1;
+		// };
+		const increaseScore = () => {
+			console.log(`Before increase: ${scorePlayer}`);
+			scorePlayer += 1;
+			console.log(`After increase: ${scorePlayer}`);
+		};
 
+		const getScore = () => scorePlayer;
+		return { mark, getScore, increaseScore };
+	};
 	return { createPlayer };
 })();
 
@@ -107,8 +117,6 @@ const gameController = (() => {
 	// switched player
 	const playerDiv = document.getElementById("player");
 	const switchPlayer = () => {
-		gameController.checkStatus();
-
 		if (currentPlayer === player1) {
 			currentPlayer = player2;
 			playerDiv.textContent = `${currentPlayer.mark} chance`;
@@ -168,6 +176,8 @@ const gameController = (() => {
 		if (gameBoard.checkWinner().condition) {
 			console.log(currentPlayer.mark, "won!");
 			winnerText.textContent = `${currentPlayer.mark} Won!`;
+			currentPlayer.increaseScore();
+			scoreChecker();
 			modal.showModal();
 		} else if (checkTie() === true) {
 			winnerText.textContent = "It's a tie!";
@@ -175,6 +185,23 @@ const gameController = (() => {
 		}
 	};
 
+	// score checker
+	const scoreChecker = () => {
+		if (player1.getScore() > player2.getScore() && player1.getScore() > 2) {
+			winnerText.textContent = `${
+				player1.mark
+			} has ${player1.getScore()} points`;
+		} else if (
+			player2.getScore() > player1.getScore() &&
+			player2.getScore() > 2
+		) {
+			winnerText.textContent = `${
+				player2.mark
+			} has ${player2.getScore()} points`;
+		}
+	};
+
+	// update board
 	const boardCells = document.querySelectorAll(".cell");
 	boardCells.forEach((cell, index) => {
 		cell.addEventListener("click", () => {
@@ -187,6 +214,7 @@ const gameController = (() => {
 		}
 	};
 
+	// reset board
 	const modal = document.getElementById("modal");
 	const resetButton = document.getElementById("replay");
 	resetButton.addEventListener("click", () => {
@@ -197,7 +225,15 @@ const gameController = (() => {
 		playerDiv.textContent = `${currentPlayer.mark} chance`;
 	});
 
-	return { playTurn, checkStatus, currentPlayer, printBoard, updateDis };
+	return {
+		player1,
+		player2,
+		playTurn,
+		checkStatus,
+		currentPlayer,
+		printBoard,
+		updateDis,
+	};
 })();
 
 gameBoard.newBoard();
