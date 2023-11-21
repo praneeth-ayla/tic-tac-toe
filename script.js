@@ -1,3 +1,5 @@
+import { randomPlace, miniMax, terminal } from "./ai.js";
+
 //  game board module
 const gameBoard = (() => {
 	let board = ["", "", "", "", "", "", "", "", ""];
@@ -110,64 +112,58 @@ const gameController = (() => {
 			console.log("its a tie");
 			return true;
 		} else {
-			false;
+			return false;
 		}
 	};
 
 	// switched player
 	const playerDiv = document.getElementById("player");
 	const switchPlayer = () => {
-		if (currentPlayer === player1) {
-			currentPlayer = player2;
-			playerDiv.textContent = `${currentPlayer.mark} chance`;
+		if (!gameBoard.checkWinner().condition && !gameController.checkTie()) {
+			if (currentPlayer === player1) {
+				currentPlayer = player2;
+				playerDiv.textContent = `${currentPlayer.mark} chance`;
 
-			console.log(`player2's turn ${player2.mark}`);
-			return currentPlayer;
+				console.log(`player2's turn ${player2.mark}`);
+				return player2.mark;
+			} else {
+				currentPlayer = player1;
+				playerDiv.textContent = `${currentPlayer.mark} chance`;
+
+				console.log(`player1's turn ${player1.mark}`);
+				return player1.mark;
+			}
 		} else {
-			currentPlayer = player1;
-			playerDiv.textContent = `${currentPlayer.mark} chance`;
-
-			console.log(`player1's turn ${player1.mark}`);
+			playerDiv.textContent = `game over`;
 		}
 	};
 
 	// play turn
 	const markAgainDiv = document.getElementById("markAgain");
+
 	const playTurn = (place) => {
 		if (gameBoard.checkMark(place)) {
 			gameBoard.placeMark(currentPlayer.mark, place);
 			markAgainDiv.textContent = "";
-			checkTie();
 
 			gameController.checkStatus();
 			updateDis();
 			switchPlayer();
-			printBoard();
+			return true;
 		} else {
 			markAgainDiv.textContent =
 				"Cell already occupied. Try a different place.";
 			console.log("try place");
+			return false;
 		}
 	};
 
-	// console only test
-	const printBoard = () => {
-		console.log("Game Board:");
-		for (let i = 0; i < 3; i++) {
-			let row = "";
-			for (let j = 0; j < 3; j++) {
-				const index = i * 3 + j;
-				row += ` ${gameBoard.board[index] || "-"} `;
-				if (j < 2) {
-					row += "|";
-				}
-			}
-			console.log(row);
-			if (i < 2) {
-				console.log("-----------");
-			}
+	// ai turn
+	const playAITurn = () => {
+		const aiMove = randomPlace();
+		if (aiMove !== false) {
+			playTurn(aiMove);
 		}
-		console.log("\n");
 	};
 
 	// check game status
@@ -205,9 +201,15 @@ const gameController = (() => {
 	const boardCells = document.querySelectorAll(".cell");
 	boardCells.forEach((cell, index) => {
 		cell.addEventListener("click", () => {
-			gameController.playTurn(index);
+			if (gameController.playTurn(index)) {
+				gameController.playAITurn();
+				// miniMax();
+				terminal();
+			}
 		});
 	});
+
+	// display board
 	const updateDis = () => {
 		for (let i = 0; i < 9; i++) {
 			boardCells[i].textContent = gameBoard.board[i];
@@ -231,9 +233,16 @@ const gameController = (() => {
 		playTurn,
 		checkStatus,
 		currentPlayer,
-		printBoard,
 		updateDis,
+		checkTie,
+		playAITurn,
 	};
 })();
 
+// gameBoard.newBoard();
 gameBoard.newBoard();
+
+export { gameBoard, gameController };
+
+window.gameController = gameController;
+window.gameBoard = gameBoard;
