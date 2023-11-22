@@ -1,4 +1,4 @@
-import { randomPlace, miniMax, terminal } from "./ai.js";
+import { randomPlace, miniMax, result, terminal } from "./ai.js";
 
 //  game board module
 const gameBoard = (() => {
@@ -13,14 +13,14 @@ const gameBoard = (() => {
 	const checkMark = (place) => board[place] === "";
 
 	// place mark
-	const placeMark = (mark, place) => {
+	const placeMark = (board, mark, place) => {
 		if (checkMark(place) === true) {
 			board[place] = mark;
 		}
 	};
 
 	// check win
-	const checkWinner = () => {
+	const checkWinner = (board) => {
 		if (board[0] !== "" && board[0] === board[1] && board[1] === board[2]) {
 			return { condition: true, mark: board[0] };
 		} else if (
@@ -104,10 +104,10 @@ const gameController = (() => {
 	let currentPlayer = player1;
 
 	// check tie
-	const checkTie = () => {
+	const checkTie = (board) => {
 		if (
-			!gameBoard.board.includes("") &&
-			gameBoard.checkWinner().condition === false
+			!board.includes("") &&
+			gameBoard.checkWinner(board).condition === false
 		) {
 			console.log("its a tie");
 			return true;
@@ -119,7 +119,10 @@ const gameController = (() => {
 	// switched player
 	const playerDiv = document.getElementById("player");
 	const switchPlayer = () => {
-		if (!gameBoard.checkWinner().condition && !gameController.checkTie()) {
+		if (
+			!gameBoard.checkWinner(gameBoard.board).condition &&
+			!gameController.checkTie(gameBoard.board)
+		) {
 			if (currentPlayer === player1) {
 				currentPlayer = player2;
 				playerDiv.textContent = `${currentPlayer.mark} chance`;
@@ -143,7 +146,7 @@ const gameController = (() => {
 
 	const playTurn = (place) => {
 		if (gameBoard.checkMark(place)) {
-			gameBoard.placeMark(currentPlayer.mark, place);
+			gameBoard.placeMark(gameBoard.board, currentPlayer.mark, place);
 			markAgainDiv.textContent = "";
 
 			gameController.checkStatus();
@@ -169,13 +172,13 @@ const gameController = (() => {
 	// check game status
 	const winnerText = document.getElementById("winner");
 	const checkStatus = () => {
-		if (gameBoard.checkWinner().condition) {
+		if (gameBoard.checkWinner(gameBoard.board).condition) {
 			console.log(currentPlayer.mark, "won!");
 			winnerText.textContent = `${currentPlayer.mark} Won!`;
 			currentPlayer.increaseScore();
 			scoreChecker();
 			modal.showModal();
-		} else if (checkTie() === true) {
+		} else if (checkTie(gameBoard.board) === true) {
 			winnerText.textContent = "It's a tie!";
 			modal.showModal();
 		}
@@ -202,9 +205,13 @@ const gameController = (() => {
 	boardCells.forEach((cell, index) => {
 		cell.addEventListener("click", () => {
 			if (gameController.playTurn(index)) {
-				gameController.playAITurn();
-				// miniMax();
-				terminal();
+				// gameController.playAITurn();
+				console.log(miniMax(gameBoard.board));
+				// console.log(miniMax(gameBoard.board));
+				// console.log(terminal().condition, "state");
+				// console.log(terminal().value, "value");
+				// let trail = ["x", "O", "x", "O", "x", "O", "x", "", "", ""];
+				// console.log(terminal(trail).condition);
 			}
 		});
 	});
