@@ -92,9 +92,9 @@ const playerModule = (() => {
 	const createPlayer = (mark) => {
 		let scorePlayer = 0;
 		const increaseScore = () => {
-			console.log(`Before increase: ${scorePlayer}`);
+			// console.log(`Before increase: ${scorePlayer}`);
 			scorePlayer += 1;
-			console.log(`After increase: ${scorePlayer}`);
+			// console.log(`After increase: ${scorePlayer}`);
 		};
 
 		const getScore = () => scorePlayer;
@@ -132,11 +132,11 @@ const gameController = (() => {
 		) {
 			if (currentPlayer === player1) {
 				currentPlayer = player2;
-				console.log(currentPlayer.mark);
+				// console.log(currentPlayer.mark);
 				return player2.mark;
 			} else {
 				currentPlayer = player1;
-				console.log(currentPlayer.mark);
+				// console.log(currentPlayer.mark);
 
 				return player1.mark;
 			}
@@ -160,7 +160,7 @@ const gameController = (() => {
 		} else {
 			markAgainDiv.textContent =
 				"Cell already occupied. Try a different place.";
-			console.log("try place");
+			// console.log("try place");
 			return false;
 		}
 	};
@@ -178,7 +178,7 @@ const gameController = (() => {
 		} else {
 			markAgainDiv.textContent =
 				"Cell already occupied. Try a different place.";
-			console.log("try place");
+			// console.log("try place");
 			return false;
 		}
 	};
@@ -196,7 +196,7 @@ const gameController = (() => {
 	const winnerTextMain = document.getElementById("winnerDivM");
 	const checkStatus = () => {
 		if (gameBoard.checkWinner(gameBoard.board).condition) {
-			console.log(currentPlayer.mark, "won!");
+			// console.log(currentPlayer.mark, "won!");
 			winnerText.textContent = `${currentPlayer.mark} Won!`;
 			currentPlayer.increaseScore();
 			if (!scoreChecker()) {
@@ -323,7 +323,7 @@ levelForm.addEventListener("submit", function (event) {
 	gameController.updateDis();
 	levelModal.close();
 	selectedLevel = getSelectedRadioValue("levelForm");
-	console.log("Selected Level:", selectedLevel);
+	// console.log("Selected Level:", selectedLevel);
 	selectLevelDiv.textContent = `Mode: ${selectedLevel}`;
 	gameController.player1.makeZero();
 	gameController.player2.makeZero();
