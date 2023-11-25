@@ -5,69 +5,101 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Tic-Tac-Toe</title>
 		<link rel="stylesheet" href="style.css" />
+		<script
+			src="https://kit.fontawesome.com/d1d6edd90f.js"
+			crossorigin="anonymous"
+		></script>
 	</head>
 	<body>
-		<table>
-			<tr>
-				<td class="cell" id="0"></td>
-				<td class="cell" id="1"></td>
-				<td class="cell" id="2"></td>
-			</tr>
-			<tr>
-				<td class="cell" id="3"></td>
-				<td class="cell" id="4"></td>
-				<td class="cell" id="5"></td>
-			</tr>
-			<tr>
-				<td class="cell" id="6"></td>
-				<td class="cell" id="7"></td>
-				<td class="cell" id="8"></td>
-			</tr>
-		</table>
-		<div id="currentScore"></div>
-		<div id="markAgain"></div>
-		<div id="levelDiv"></div>
-		<button id="selectLevelOptn">CHOOSE MODE</button>
-		<dialog id="resetModal">
-			<div class="scoreDiv" id="scoreDivM"></div>
-			<div class="winnerDiv" id="winnerDivM"></div>
-			<button id="chooseMode">CHOOSE MODE</button>
-		</dialog>
-		<dialog id="replayModal">
-			<div class="scoreDiv" id="scoreDiv"></div>
-			<div class="winnerDiv" id="winnerDiv"></div>
-			<button id="replay">Replay</button>
-		</dialog>
-		<dialog id="levelModal">
-			<div id="levelText">CHOOSE MODE:</div>
-			<form id="levelForm">
-				<input
-					type="radio"
-					name="level"
-					id="easyLevel"
-					value="Easy"
-					checked
-				/>
-				<label for="easyLevel">Easy</label>
-				<input
-					type="radio"
-					name="level"
-					id="mediumLevel"
-					value="Medium"
-				/>
-
-				<label for="mediumLevel">Medium</label>
-				<input
-					type="radio"
-					name="level"
-					id="impLevel"
-					value="Impossible"
-				/>
-				<label for="impLevel">Impossible</label>
-				<button type="submit">SELECT</button>
-			</form>
-		</dialog>
+		<div id="mainBody">
+			<div id="logoText">Tic Tac Toe</div>
+			<table>
+				<tr>
+					<td class="cell" id="0"></td>
+					<td class="cell" id="1"></td>
+					<td class="cell" id="2"></td>
+				</tr>
+				<tr>
+					<td class="cell" id="3"></td>
+					<td class="cell" id="4"></td>
+					<td class="cell" id="5"></td>
+				</tr>
+				<tr>
+					<td class="cell" id="6"></td>
+					<td class="cell" id="7"></td>
+					<td class="cell" id="8"></td>
+				</tr>
+			</table>
+			<div id="allText">
+				<div id="markAgain"></div>
+				<div id="currentScore"></div>
+				<div id="levelDiv"></div>
+				<button id="selectLevelOptn">CHOOSE MODE</button>
+			</div>
+			<footer>
+				<span
+					>Copyright © 2023
+					<a href="https://github.com/praneeth-ayla"
+						>praneeth-ayla</a
+					></span
+				>
+				<a href="https://github.com/praneeth-ayla/tic-tac-toe"
+					><i class="fab fa-github fa-2x"></i
+				></a>
+			</footer>
+		</div>
 
 		<script src="script.js" type="module"></script>
 	</body>
+
+	<!-- <dialog id="playerSelModal">
+		<div>Select Player</div>
+		<form id="playerForm">
+			<input
+				type="radio"
+				name="player"
+				id="singlePlay"
+				value="single"
+			/>
+			<label for="singlePlay">Player vs Bot</label>
+			<input
+				type="radio"
+				name="player"
+				id="multiPlay"
+				value="multiple"
+				checked
+			/>
+			<label for="multiPlay">Player vs Player</label>
+			<button type="submit">SELECT</button>
+		</form>
+	</dialog> -->
+	<dialog id="levelModal">
+		<div id="levelText">CHOOSE DIFFICULTY:</div>
+		<form id="levelForm">
+			<input
+				type="radio"
+				name="level"
+				id="easyLevel"
+				value="Easy"
+				checked
+			/>
+			<label for="easyLevel">Easy</label>
+			<input type="radio" name="level" id="mediumLevel" value="Medium" />
+
+			<label for="mediumLevel">Medium</label>
+			<input type="radio" name="level" id="impLevel" value="Impossible" />
+			<label for="impLevel">Impossible</label>
+			<button type="submit">SELECT</button>
+		</form>
+	</dialog>
+	<dialog id="resetModal">
+		<div class="scoreDiv" id="scoreDivM"></div>
+		<div class="winnerDiv" id="winnerDivM"></div>
+		<button id="chooseMode">CHOOSE MODE</button>
+	</dialog>
+	<dialog id="replayModal">
+		<div class="scoreDiv" id="scoreDiv"></div>
+		<div class="winnerDiv" id="winnerDiv"></div>
+		<button id="replay">Replay</button>
+	</dialog>
 </html>

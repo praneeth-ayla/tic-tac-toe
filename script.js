@@ -204,14 +204,14 @@ const gameController = (() => {
 			}
 			currentScore.textContent = `Your Score: ${gameController.player1.getScore()} | Bot Score: ${gameController.player2.getScore()}`;
 		} else if (checkTie(gameBoard.board) === true) {
-			winnerText.textContent = "its a tie bro";
+			winnerText.textContent = "its a tie";
 			replayModal.showModal();
 		}
 	};
 
 	// score checker
 	const scoreChecker = () => {
-		if (player1.getScore() > player2.getScore() && player1.getScore() > 1) {
+		if (player1.getScore() > player2.getScore() && player1.getScore() > 2) {
 			winnerTextMain.textContent = `You WON!`;
 			scoreDivMain.textContent = `Your Score: ${player1.getScore()} | Bot Score: ${player2.getScore()}`;
 			currentScore.textContent = `Your Score: 0 | Bot Score: 0`;
@@ -219,7 +219,7 @@ const gameController = (() => {
 			return true;
 		} else if (
 			player2.getScore() > player1.getScore() &&
-			player2.getScore() > 1
+			player2.getScore() > 2
 		) {
 			winnerTextMain.textContent = `Haha, You LOST!`;
 			scoreDivMain.textContent = `Your Score: ${player1.getScore()} | Bot Score: ${player2.getScore()}`;
@@ -236,6 +236,8 @@ const gameController = (() => {
 	const boardCells = document.querySelectorAll(".cell");
 	boardCells.forEach((cell, index) => {
 		cell.addEventListener("click", () => {
+			// if (gameController.playTurn(index)) {
+			// }
 			if (selectedLevel === "Easy") {
 				if (gameController.playTurn(index)) {
 					gameController.playRandom();
@@ -301,15 +303,16 @@ const gameController = (() => {
 gameBoard.newBoard();
 
 // select level
-const currentScore = document.getElementById("currentScore");
-const scoreDiv = document.getElementById("scoreDiv");
-const scoreDivMain = document.getElementById("scoreDivM");
-const levelModal = document.getElementById("levelModal");
 const getSelectedRadioValue = (formId) => {
 	const form = document.getElementById(formId);
 	const selectedRadio = form.querySelector('input[name="level"]:checked');
 	return selectedRadio ? selectedRadio.value : null;
 };
+const currentScore = document.getElementById("currentScore");
+const scoreDiv = document.getElementById("scoreDiv");
+const scoreDivMain = document.getElementById("scoreDivM");
+const levelModal = document.getElementById("levelModal");
+
 let selectedLevel;
 const levelForm = document.getElementById("levelForm");
 const selectLevelDiv = document.getElementById("levelDiv");
