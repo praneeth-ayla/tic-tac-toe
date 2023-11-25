@@ -24,13 +24,50 @@
 				<td class="cell" id="8"></td>
 			</tr>
 		</table>
-
-		<div id="player"></div>
+		<div id="currentScore"></div>
 		<div id="markAgain"></div>
-		<dialog id="modal">
-			<div id="winner"></div>
+		<div id="levelDiv"></div>
+		<button id="selectLevelOptn">CHOOSE MODE</button>
+		<dialog id="resetModal">
+			<div class="scoreDiv" id="scoreDivM"></div>
+			<div class="winnerDiv" id="winnerDivM"></div>
+			<button id="chooseMode">CHOOSE MODE</button>
+		</dialog>
+		<dialog id="replayModal">
+			<div class="scoreDiv" id="scoreDiv"></div>
+			<div class="winnerDiv" id="winnerDiv"></div>
 			<button id="replay">Replay</button>
 		</dialog>
+		<dialog id="levelModal">
+			<div id="levelText">CHOOSE MODE:</div>
+			<form id="levelForm">
+				<input
+					type="radio"
+					name="level"
+					id="easyLevel"
+					value="Easy"
+					checked
+				/>
+				<label for="easyLevel">Easy</label>
+				<input
+					type="radio"
+					name="level"
+					id="mediumLevel"
+					value="Medium"
+				/>
+
+				<label for="mediumLevel">Medium</label>
+				<input
+					type="radio"
+					name="level"
+					id="impLevel"
+					value="Impossible"
+				/>
+				<label for="impLevel">Impossible</label>
+				<button type="submit">SELECT</button>
+			</form>
+		</dialog>
+
 		<script src="script.js" type="module"></script>
 	</body>
 </html>

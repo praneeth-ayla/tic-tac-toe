@@ -91,9 +91,6 @@ const gameBoard = (() => {
 const playerModule = (() => {
 	const createPlayer = (mark) => {
 		let scorePlayer = 0;
-		// const increaseScore = () => {
-		// 	scorePlayer += 1;
-		// };
 		const increaseScore = () => {
 			console.log(`Before increase: ${scorePlayer}`);
 			scorePlayer += 1;
@@ -101,7 +98,10 @@ const playerModule = (() => {
 		};
 
 		const getScore = () => scorePlayer;
-		return { mark, getScore, increaseScore };
+
+		const makeZero = () => (scorePlayer = 0);
+
+		return { mark, getScore, increaseScore, makeZero };
 	};
 	return { createPlayer };
 })();
@@ -124,8 +124,7 @@ const gameController = (() => {
 		}
 	};
 
-	// switched player
-	const playerDiv = document.getElementById("player");
+	// switch player
 	const switchPlayer = () => {
 		if (
 			!gameBoard.checkWinner(gameBoard.board).condition &&
@@ -133,30 +132,23 @@ const gameController = (() => {
 		) {
 			if (currentPlayer === player1) {
 				currentPlayer = player2;
-				playerDiv.textContent = `${currentPlayer.mark} chance`;
-
-				console.log(`player2's turn ${player2.mark}`);
+				console.log(currentPlayer.mark);
 				return player2.mark;
 			} else {
 				currentPlayer = player1;
-				playerDiv.textContent = `${currentPlayer.mark} chance`;
+				console.log(currentPlayer.mark);
 
-				console.log(`player1's turn ${player1.mark}`);
 				return player1.mark;
 			}
-		} else {
-			playerDiv.textContent = `game over`;
 		}
 	};
 
 	// play turn
 	const markAgainDiv = document.getElementById("markAgain");
-
 	const playTurnMiniMax = (place) => {
 		if (gameBoard.checkMark(place)) {
 			gameBoard.placeMark(gameBoard.board, "X", place);
 			markAgainDiv.textContent = "";
-			setTimeout(10000);
 			switchPlayer();
 
 			compMove();
@@ -181,6 +173,7 @@ const gameController = (() => {
 			gameController.checkStatus();
 			updateDis();
 			switchPlayer();
+
 			return true;
 		} else {
 			markAgainDiv.textContent =
@@ -199,33 +192,43 @@ const gameController = (() => {
 	};
 
 	// check game status
-	const winnerText = document.getElementById("winner");
+	const winnerText = document.getElementById("winnerDiv");
+	const winnerTextMain = document.getElementById("winnerDivM");
 	const checkStatus = () => {
 		if (gameBoard.checkWinner(gameBoard.board).condition) {
 			console.log(currentPlayer.mark, "won!");
 			winnerText.textContent = `${currentPlayer.mark} Won!`;
 			currentPlayer.increaseScore();
-			scoreChecker();
-			modal.showModal();
+			if (!scoreChecker()) {
+				replayModal.showModal();
+			}
+			currentScore.textContent = `Your Score: ${gameController.player1.getScore()} | Bot Score: ${gameController.player2.getScore()}`;
 		} else if (checkTie(gameBoard.board) === true) {
 			winnerText.textContent = "its a tie bro";
-			modal.showModal();
+			replayModal.showModal();
 		}
 	};
 
 	// score checker
 	const scoreChecker = () => {
-		if (player1.getScore() > player2.getScore() && player1.getScore() > 2) {
-			winnerText.textContent = `${
-				player1.mark
-			} has ${player1.getScore()} points`;
+		if (player1.getScore() > player2.getScore() && player1.getScore() > 1) {
+			winnerTextMain.textContent = `You WON!`;
+			scoreDivMain.textContent = `Your Score: ${player1.getScore()} | Bot Score: ${player2.getScore()}`;
+			currentScore.textContent = `Your Score: 0 | Bot Score: 0`;
+			resetModal.showModal();
+			return true;
 		} else if (
 			player2.getScore() > player1.getScore() &&
-			player2.getScore() > 2
+			player2.getScore() > 1
 		) {
-			winnerText.textContent = `${
-				player2.mark
-			} has ${player2.getScore()} points`;
+			winnerTextMain.textContent = `Haha, You LOST!`;
+			scoreDivMain.textContent = `Your Score: ${player1.getScore()} | Bot Score: ${player2.getScore()}`;
+			resetButton.textContent = "Choose Mode";
+			currentScore.textContent = `Your Score: 0 | Bot Score: 0`;
+			resetModal.showModal();
+			return true;
+		} else {
+			return false;
 		}
 	};
 
@@ -233,13 +236,25 @@ const gameController = (() => {
 	const boardCells = document.querySelectorAll(".cell");
 	boardCells.forEach((cell, index) => {
 		cell.addEventListener("click", () => {
-			// if (gameController.playTurn(index)) {
-			// 	gameController.playRandom();
-			// }
-			if (gameController.playTurnMiniMax(index)) {
+			if (selectedLevel === "Easy") {
+				if (gameController.playTurn(index)) {
+					gameController.playRandom();
+				}
+			} else if (selectedLevel === "Medium") {
+				let mediumLevel = [1, 2, 3];
+				let x = mediumLevel[Math.floor(Math.random() * 3)];
+				if (x === 1) {
+					if (gameController.playTurn(index)) {
+						gameController.playRandom();
+					}
+				} else {
+					if (gameController.playTurnMiniMax(index)) {
+					}
+				}
+			} else {
+				if (gameController.playTurnMiniMax(index)) {
+				}
 			}
-
-			console.log(gameBoard.board);
 		});
 	});
 
@@ -251,16 +266,24 @@ const gameController = (() => {
 	};
 
 	// reset board
-	const modal = document.getElementById("modal");
-	const resetButton = document.getElementById("replay");
-	resetButton.addEventListener("click", () => {
-		gameBoard.newBoard();
-		modal.close();
-		updateDis();
-		currentPlayer = player1; // Reset the current player to player1
-		playerDiv.textContent = `${currentPlayer.mark} chance`;
-	});
+	const replayModal = document.getElementById("replayModal");
+	const resetModal = document.getElementById("resetModal");
+	const resetButton = document.getElementById("chooseMode");
+	const replayButton = document.getElementById("replay");
 
+	replayButton.addEventListener("click", () => {
+		gameBoard.newBoard();
+		replayModal.close();
+		gameController.updateDis();
+		currentPlayer = player1;
+	});
+	resetButton.addEventListener("click", () => {
+		resetModal.showModal();
+		levelModal.showModal();
+		currentPlayer = player1;
+		gameController.player1.makeZero();
+		gameController.player2.makeZero();
+	});
 	return {
 		player1,
 		player2,
@@ -277,7 +300,40 @@ const gameController = (() => {
 // gameBoard.newBoard();
 gameBoard.newBoard();
 
-export { gameBoard, gameController };
+// select level
+const currentScore = document.getElementById("currentScore");
+const scoreDiv = document.getElementById("scoreDiv");
+const scoreDivMain = document.getElementById("scoreDivM");
+const levelModal = document.getElementById("levelModal");
+const getSelectedRadioValue = (formId) => {
+	const form = document.getElementById(formId);
+	const selectedRadio = form.querySelector('input[name="level"]:checked');
+	return selectedRadio ? selectedRadio.value : null;
+};
+let selectedLevel;
+const levelForm = document.getElementById("levelForm");
+const selectLevelDiv = document.getElementById("levelDiv");
+levelForm.addEventListener("submit", function (event) {
+	scoreDiv.textContent = "";
+	event.preventDefault();
+	gameBoard.newBoard();
+	gameController.updateDis();
+	levelModal.close();
+	selectedLevel = getSelectedRadioValue("levelForm");
+	console.log("Selected Level:", selectedLevel);
+	selectLevelDiv.textContent = `Mode: ${selectedLevel}`;
+	gameController.player1.makeZero();
+	gameController.player2.makeZero();
+	currentScore.textContent = `Your Score: 0 | Bot Score: 0`;
 
+	resetModal.close();
+});
+const selectLevelOptn = document.getElementById("selectLevelOptn");
+selectLevelOptn.addEventListener("click", () => {
+	levelModal.showModal();
+});
+levelModal.showModal();
+
+export { gameBoard, gameController };
 window.gameController = gameController;
 window.gameBoard = gameBoard;
